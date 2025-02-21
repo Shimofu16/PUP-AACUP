@@ -37,7 +37,7 @@ class ListArticle extends Component implements HasForms, HasTable
         $user = Auth::user(); 
         return $table
             ->query(Article::query()
-                ->when($user->role === 'faculty', fn(Builder $query) => $query->where('user_id', $user->id)))
+                ->when($user->hasRole('faculty'), fn(Builder $query) => $query->where('user_id', $user->id)))
             ->columns([
                 TextColumn::make('program.name')->searchable(),
                 TextColumn::make('user.name')->searchable(),

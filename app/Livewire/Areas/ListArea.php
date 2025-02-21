@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Areas;
 
+use App\Enums\AreaEnum;
 use App\Models\Area;
+use App\Models\User;
 use Filament\Tables;
 use Livewire\Component;
 use Filament\Tables\Table;
@@ -16,6 +18,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Filters\SelectFilter;
 
 class ListArea extends Component implements HasForms, HasTable
 {
@@ -27,11 +30,17 @@ class ListArea extends Component implements HasForms, HasTable
         return $table
             ->query(Area::query())
             ->columns([
-                TextColumn::make('area')->searchable(),
                 TextColumn::make('user.name')->searchable(),
-            ])
+                TextColumn::make('areas')
+                    ->searchable(),
+                TextColumn::make('programs')
+
+                    ->searchable(),
+        ])
             ->filters([
-                //
+                SelectFilter::make('area')
+                    ->options(AreaEnum::toArray())
+                    ->label('Area')
             ])
             ->actions([
                 EditAction::make()
@@ -43,8 +52,10 @@ class ListArea extends Component implements HasForms, HasTable
                     ->icon('heroicon-o-trash')
                     ->label('Delete')
                     ->action(fn(Area $record) => $record->delete())
-                    ->requiresConfirmation(), 
+                    ->requiresConfirmation(),
             ])
+            ->emptyStateHeading('No areas found')
+            ->emptyStateDescription('No areas have been assigned to any users yet.')
             ->emptyStateActions([
                 Action::make('create')
                     ->label('Asign area')

@@ -16,22 +16,22 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     @role(['admin'])
-                        <x-nav-link :href="route('areas.index')" :active="request()->routeIs('areas.index')">
+                        <x-nav-link :href="route('areas.index')" :active="request()->routeIs(['areas.index', 'areas.create', 'areas.edit'])">
                             {{ __('Areas') }}
                         </x-nav-link>
                     @endrole
                     @role(['admin', 'faculty'])
-                        <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.index')">
+                        <x-nav-link :href="route('articles.index')" :active="request()->routeIs(['articles.index', 'articles.create', 'articles.edit'])">
                             {{ __('Articles') }}
                         </x-nav-link>
                     @endrole
                     @role(['admin'])
-                        <x-nav-link :href="route('programs.index')" :active="request()->routeIs('programs.index')">
+                        <x-nav-link :href="route('programs.index')" :active="request()->routeIs(['programs.index', 'programs.create', 'programs.edit'])">
                             {{ __('Programs') }}
                         </x-nav-link>
                     @endrole
                     @role(['admin'])
-                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs(['users.index', 'users.create', 'users.edit'])">
                             {{ __('Users') }}
                         </x-nav-link>
                     @endrole
@@ -98,6 +98,26 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @role(['admin'])
+                <x-responsive-nav-link :href="route('areas.index')" :active="request()->routeIs(['areas.index', 'areas.create', 'areas.edit'])">
+                    {{ __('Areas') }}
+                </x-responsive-nav-link>
+            @endrole
+            @role(['admin', 'faculty'])
+                <x-responsive-nav-link :href="route('articles.index')" :active="request()->routeIs(['articles.index', 'articles.create', 'articles.edit'])">
+                    {{ __('Articles') }}
+                </x-responsive-nav-link>
+            @endrole
+            @role(['admin'])
+                <x-responsive-nav-link :href="route('programs.index')" :active="request()->routeIs(['programs.index', 'programs.create', 'programs.edit'])">
+                    {{ __('Programs') }}
+                </x-responsive-nav-link>
+            @endrole
+            @role(['admin'])
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs(['users.index', 'users.create', 'users.edit'])">
+                    {{ __('Users') }}
+                </x-responsive-nav-link>
+            @endrole
         </div>
 
         <!-- Responsive Settings Options -->

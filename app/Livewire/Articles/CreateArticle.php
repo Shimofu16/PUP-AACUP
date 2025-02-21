@@ -22,15 +22,14 @@ class CreateArticle extends Component implements HasForms
     use InteractsWithForms;
 
     public ?array $data = [];
+    public $area = null;
+    public $program_id = null;
+    public $users = [];
 
-    public ?string $area = "";
-
-    public function mount($area = null): void
+    public function mount(): void
     {
-        $this->area = $area;
-        $this->form->fill([
-            'area' => $area,
-        ]);
+        $this->form->fill();
+        $this->updateUserOptions(); // Populate users initially
     }
 
     public function form(Form $form): Form
@@ -40,35 +39,31 @@ class CreateArticle extends Component implements HasForms
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-
+                
                 Select::make('program_id')
                     ->label('Program')
-                    ->options(Program::pluck('name', 'id')->toArray())
+                    ->options(auth()->user()->hasRole('faculty') ? Program::whereIn('id', auth()->user()->area->program_ids)->pluck('name', 'id')->toArray() : Program::pluck('name', 'id')->toArray())
                     ->searchable()
                     ->required()
-                    ->preload(),
+                    ->preload()
+                    ->live()
+                    ->afterStateUpdated(fn ($state) => $this->updateUserOptions($state, 'program_id')),
+
                 Select::make('area')
-                    ->options(AreaEnum::toArray())
+                    ->options(auth()->user()->hasRole('faculty') ? auth()->user()->area->areas: AreaEnum::toArray())
                     ->required()
                     ->searchable()
-                    ->default($this->area)
-                    ->live() // Makes the field reactive
-                    ->afterStateUpdated(fn($state) => $this->updateUserOptions($state)), // Update user list
+                    ->live()
+                    ->afterStateUpdated(fn ($state) => $this->updateUserOptions($state, 'area')),
 
                 Select::make('user_id')
                     ->label('User')
-                    ->options(
-                        fn() =>
-                        $this->area
-                            ? User::whereHas('areas', function ($query) {
-                                $query->where('area', $this->area);
-                            })->pluck('name', 'id')->toArray()
-                            : []
-                    )
+                    ->default(auth()->user()->hasRole('faculty') ? auth()->user()->id : null)
+                    ->options(fn() => $this->users)
                     ->searchable()
                     ->required()
+                    ->disabled(auth()->user()->hasRole('faculty'))
                     ->preload(),
-
 
                 FileUpload::make('document')
                     ->required(),
@@ -102,9 +97,9 @@ class CreateArticle extends Component implements HasForms
     {
         $data = $this->form->getState();
 
-         Article::create($data);
+        Article::create($data);
 
-         $this->dispatch('swal', [
+        $this->dispatch('swal', [
             'toast' => true,
             'position' => 'top-end',
             'showConfirmButton' => false,
@@ -114,13 +109,38 @@ class CreateArticle extends Component implements HasForms
             'icon' => 'success'
         ]);
 
-        $this->redirect('/areas', true);
-
+        $this->redirect('/articles', true);
     }
-    public function updateUserOptions($selectedArea)
+
+    public function updateUserOptions($state = null, $field = null)
     {
-        $this->area = $selectedArea;
-        $this->data['user_id'] = null; 
+        if ($field === 'program_id') {
+            $this->program_id = $state;
+        } elseif ($field === 'area') {
+            $this->area = $state;
+        }
+
+        if (auth()->user()->hasRole('faculty')) {
+            $this->users = User::where('id', auth()->user()->id)->pluck('name', 'id')->toArray();
+            return;
+        }
+
+        $query = User::query()->role('faculty');
+
+        if ($this->program_id) {
+            $query->whereHas('area', function ($q) {
+                $q->whereJsonContains('program_ids', $this->program_id);
+            });
+
+        }
+
+        if ($this->area) {
+            $query->whereHas('area', function ($q) {
+                $q->whereJsonContains('areas', $this->area);
+            });
+        }
+
+        $this->users = $query->pluck('name', 'id')->toArray();
     }
 
     public function render(): View

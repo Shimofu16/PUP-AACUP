@@ -4,6 +4,7 @@ namespace App\Livewire\Areas;
 
 use App\Enums\AreaEnum;
 use App\Models\Area;
+use App\Models\Program;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -15,7 +16,6 @@ use Illuminate\Contracts\View\View;
 class EditArea extends Component implements HasForms
 {
     use InteractsWithForms;
-
     public ?array $data = [];
     public Area $record;
 
@@ -29,14 +29,21 @@ class EditArea extends Component implements HasForms
     {
         return $form
             ->schema([
-                Select::make('area')
+                Select::make('areas')
                     ->options(AreaEnum::toArray())
+                    ->multiple()
                     ->required()
                     ->searchable(),
-
+                Select::make('program_ids')
+                    ->label('Programs')
+                    ->options(Program::pluck('name', 'id')->toArray())
+                    ->multiple()
+                    ->required()
+                    ->searchable()
+                    ->preload(),
                 Select::make('user_id')
                     ->label('User')
-                    ->options(User::pluck('name', 'id')->toArray())
+                    ->options(User::role('faculty')->pluck('name', 'id')->toArray())
                     ->searchable()
                     ->required()
                     ->preload(),
@@ -48,28 +55,26 @@ class EditArea extends Component implements HasForms
 
     public function save(): void
     {
-        $data = $this->form->getState();
 
-        $query = Area::where(function ($query) use ($data) {
-            $query->where('area', $data['area'])
-                  ->orWhere('user_id', $data['user_id']);
-        })->where('id', '!=', $this->record->id);
+        // $query = Area::where(function ($query) use ($data) {
+        //     $query->where('area', $data['area'])
+        //         ->orWhere('user_id', $data['user_id']);
+        // });
 
-         if ($query->exists()){
-            $this->dispatch('swal', [
-                'toast' => true,
-                'position' => 'top-end',
-                'showConfirmButton' => false,
-                'timer' => 3000,
-                'title' => 'Duplicate Entry!',
-                'text' => 'This area or user already exists.',
-                'icon' => 'error'
-            ]);
-            return;
-        }
+        // if ($query->exists()) {
+        //     $this->dispatch('swal', [
+        //         'toast' => true,
+        //         'position' => 'top-end',
+        //         'showConfirmButton' => false,
+        //         'timer' => 3000,
+        //         'title' => 'Duplicate Entry!',
+        //         'text' => 'This area or user already exists.',
+        //         'icon' => 'error'
+        //     ]);
+        //     return;
+        // }
 
-        $this->record->update($data);
-
+        Area::create($this->data);
 
         $this->dispatch('swal', [
             'toast' => true,
@@ -77,7 +82,7 @@ class EditArea extends Component implements HasForms
             'showConfirmButton' => false,
             'timer' => 3000,
             'title' => 'Success!',
-            'text' => 'Area successfully updated.',
+            'text' => 'Area successfully created.',
             'icon' => 'success'
         ]);
 
@@ -86,6 +91,6 @@ class EditArea extends Component implements HasForms
 
     public function render(): View
     {
-        return view('livewire.areas.edit-area');
+        return view('livewire.areas.create-area');
     }
 }

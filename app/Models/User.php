@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -49,8 +50,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function areas():HasMany
+    public function area(): HasOne
     {
-        return $this->hasMany(Area::class ,'user_id');
+        return $this->hasOne(Area::class, 'user_id');
+    }
+
+    public function getAreasArray(): array
+    {
+        return $this->area()->area;
     }
 }

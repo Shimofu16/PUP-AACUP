@@ -28,14 +28,14 @@
         <!-- Page Heading -->
         @isset($header)
             <header class="">
-                <div class="px-4 pt-6 mx-auto max-w-7xl sm:px-6 lg:px-8 flex justify-between items-center">
+                <div class="flex items-center justify-between px-4 pt-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>
             </header>
         @endisset
 
         <!-- Page Content -->
-        <main>
+        <main class="py-8">
             {{ $slot }}
         </main>
     </div>
