@@ -60,7 +60,7 @@ class CreateUser extends Component implements HasForms
             'icon' => 'success'
         ]);
 
-        $this->redirect('/users', true);
+        $this->redirect(route('backend.users.index'), true);
     }
 
     public function render(): View

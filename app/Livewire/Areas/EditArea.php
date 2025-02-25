@@ -86,7 +86,7 @@ class EditArea extends Component implements HasForms
             'icon' => 'success'
         ]);
 
-        $this->redirect('/areas', true);
+        $this->redirect(route('backend.areas.index'), true);
     }
 
     public function render(): View

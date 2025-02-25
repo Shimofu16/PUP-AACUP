@@ -2,14 +2,15 @@
 
 namespace App\Livewire\Programs;
 
-use App\Models\Program;
 use Filament\Forms;
+use App\Models\Program;
+use Livewire\Component;
+use Filament\Forms\Form;
+use Illuminate\Support\Str;
+use Illuminate\Contracts\View\View;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Livewire\Component;
-use Illuminate\Contracts\View\View;
 
 class EditProgram extends Component implements HasForms
 {
@@ -30,6 +31,7 @@ class EditProgram extends Component implements HasForms
         return $form
             ->schema([
                 Forms\Components\FileUpload::make('image')
+                    ->directory(fn() => 'programs/' . Str::slug($this->data['name']))
                     ->image()
                     ->required(),
                 Forms\Components\TextInput::make('code')
@@ -75,12 +77,12 @@ class EditProgram extends Component implements HasForms
             'showConfirmButton' => false,
             'timer' => 3000,
             'title' => 'Success!',
-            'text' => 'Area successfully updated.',
+            'text' => 'Program successfully updated.',
             'icon' => 'success'
         ]);
 
 
-        $this->redirect('/programs', true);
+        $this->redirect(route('backend.programs.index'), true);
     }
 
 

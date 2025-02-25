@@ -13,7 +13,7 @@ class AreaController extends Controller
      */
     public function index()
     {
-        return view('pages.areas.index');
+        return view('backend.pages.areas.index');
     }
 
     /**
@@ -21,7 +21,7 @@ class AreaController extends Controller
      */
     public function create()
     {
-        return view('pages.areas.create');
+        return view('backend.pages.areas.create');
     }
 
     /**
@@ -45,7 +45,7 @@ class AreaController extends Controller
      */
     public function edit(Area $area)
     {
-        return view('pages.areas.edit', compact('area'));
+        return view('backend.pages.areas.edit', compact('area'));
     }
 
     /**

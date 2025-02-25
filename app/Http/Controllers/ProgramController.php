@@ -12,7 +12,7 @@ class ProgramController extends Controller
      */
     public function index()
     {
-        return view('pages.programs.index');
+        return view('backend.pages.programs.index');
     }
 
     /**
@@ -44,21 +44,21 @@ class ProgramController extends Controller
      */
     public function edit(Program $program)
     {
-        return view('pages.programs.edit', compact('program'));
+        return view('backend.pages.programs.edit', compact('program'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Program $program)
     {
-        //
+        
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Program $program)
     {
         //
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -11,7 +12,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        return view('pages.articles.index');
+        return view('backend.pages.articles.index');
     }
 
     /**
@@ -20,7 +21,7 @@ class ArticleController extends Controller
     public function create($area = "")
     {
         $title = "Create Article";
-        return view('pages.articles.form', compact('title', 'area'));
+        return view('backend.pages.articles.create', compact('title', 'area'));
     }
 
     /**
@@ -34,7 +35,7 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Article $article)
     {
         //
     }
@@ -42,15 +43,15 @@ class ArticleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Article $article)
     {
-        //
+        return view('backend.pages.articles.edit', compact('article'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Article $article)
     {
         //
     }
@@ -58,7 +59,7 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Article $article)
     {
         //
     }

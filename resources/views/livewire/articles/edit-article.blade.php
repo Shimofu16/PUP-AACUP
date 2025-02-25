@@ -2,7 +2,6 @@
     <form wire:submit="save">
         {{ $this->form }}
 
-
         <div class="flex justify-end mt-6">
             <x-primary-button>
                 {{ __('Submit') }}

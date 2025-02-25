@@ -12,7 +12,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('pages.users.index');
+        return view('backend.pages.users.index');
     }
 
     /**
@@ -20,7 +20,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('pages.users.create');
+        return view('backend.pages.users.create');
     }
 
     /**
@@ -44,7 +44,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('pages.users.edit', compact('user'));
+        return view('backend.pages.users.edit', compact('user'));
     }
 
 

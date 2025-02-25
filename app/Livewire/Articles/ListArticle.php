@@ -98,7 +98,7 @@ class ListArticle extends Component implements HasForms, HasTable
                             ])->columns(2)
                     ]),
                 EditAction::make()
-                    ->url(fn(Article $record) => route('articles.edit', $record))
+                    ->url(fn(Article $record) => route('backend.articles.edit', $record))
                     ->icon('heroicon-o-pencil')
                     ->label('Edit'),
                 DeleteAction::make()

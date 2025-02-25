@@ -44,7 +44,7 @@ class ListArea extends Component implements HasForms, HasTable
             ])
             ->actions([
                 EditAction::make()
-                    ->url(fn(Area $record): string => route('areas.edit', $record))
+                    ->url(fn(Area $record): string => route('backend.areas.edit', $record))
                     ->icon('heroicon-o-pencil')
                     ->label('Edit'),
 

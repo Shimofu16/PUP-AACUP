@@ -58,7 +58,7 @@ class ListProgram extends Component implements HasForms, HasTable
 
                     ]),
                 EditAction::make()
-                    ->url(fn(Program $record) => route('programs.edit', $record))
+                    ->url(fn(Program $record) => route('backend.programs.edit', $record))
                     ->icon('heroicon-o-pencil')
                     ->label('Edit'),
 

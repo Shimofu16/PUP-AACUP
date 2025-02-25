@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Articles;
 
-use Filament\Forms;
-use App\Models\User;
 use App\Enums\AreaEnum;
+use Filament\Forms;
 use App\Models\Article;
 use App\Models\Program;
+use App\Models\User;
 use Livewire\Component;
 use Filament\Forms\Form;
 use Illuminate\Support\Str;
@@ -18,19 +18,23 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Concerns\InteractsWithForms;
 
-class CreateArticle extends Component implements HasForms
+class EditArticle extends Component implements HasForms
 {
     use InteractsWithForms;
 
     public ?array $data = [];
+
+    public Article $record;
+
     public $area = null;
     public $program_id = null;
     public $users = [];
 
-    public function mount(): void
+    public function mount(Article $article): void
     {
-        $this->form->fill();
-        $this->updateUserOptions(); // Populate users initially
+        $this->record = $article;
+        $this->updateUserOptions();
+        $this->form->fill($article->attributesToArray());
     }
 
     public function form(Form $form): Form
@@ -94,28 +98,8 @@ class CreateArticle extends Component implements HasForms
             ])
             ->columns(2)
             ->statePath('data')
-            ->model(Article::class);
+            ->model($this->record);
     }
-
-    public function save(): void
-    {
-        $data = $this->form->getState();
-
-        Article::create($data);
-
-        $this->dispatch('swal', [
-            'toast' => true,
-            'position' => 'top-end',
-            'showConfirmButton' => false,
-            'timer' => 3000,
-            'title' => 'Success!',
-            'text' => 'Article successfully created.',
-            'icon' => 'success'
-        ]);
-
-        $this->redirect(route('backend.articles.index'), true);
-    }
-
     public function updateUserOptions($state = null, $field = null)
     {
         if ($field === 'program_id') {
@@ -145,9 +129,27 @@ class CreateArticle extends Component implements HasForms
 
         $this->users = $query->pluck('name', 'id')->toArray();
     }
+    public function save(): void
+    {
+        $data = $this->form->getState();
+
+        $this->record->update($data);
+
+        $this->dispatch('swal', [
+            'toast' => true,
+            'position' => 'top-end',
+            'showConfirmButton' => false,
+            'timer' => 3000,
+            'title' => 'Success!',
+            'text' => 'Article successfully updated.',
+            'icon' => 'success'
+        ]);
+
+        $this->redirect(route('backend.articles.index'), true);
+    }
 
     public function render(): View
     {
-        return view('livewire.articles.create-article');
+        return view('livewire.articles.edit-article');
     }
 }

@@ -5,33 +5,33 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="flex items-center shrink-0">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('backend.dashboard') }}">
                         <x-application-logo class="block w-auto text-gray-800 fill-current h-9" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('backend.dashboard')" :active="request()->routeIs('backend.dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     @role(['admin'])
-                        <x-nav-link :href="route('areas.index')" :active="request()->routeIs(['areas.index', 'areas.create', 'areas.edit'])">
+                        <x-nav-link :href="route('backend.areas.index')" :active="request()->routeIs(['backend.areas.index', 'backend.areas.create', 'backend.areas.edit'])">
                             {{ __('Areas') }}
                         </x-nav-link>
                     @endrole
                     @role(['admin', 'faculty'])
-                        <x-nav-link :href="route('articles.index')" :active="request()->routeIs(['articles.index', 'articles.create', 'articles.edit'])">
+                        <x-nav-link :href="route('backend.articles.index')" :active="request()->routeIs(['backend.articles.index', 'backend.articles.create', 'backend.articles.edit'])">
                             {{ __('Articles') }}
                         </x-nav-link>
                     @endrole
                     @role(['admin'])
-                        <x-nav-link :href="route('programs.index')" :active="request()->routeIs(['programs.index', 'programs.create', 'programs.edit'])">
+                        <x-nav-link :href="route('backend.programs.index')" :active="request()->routeIs(['backend.programs.index', 'backend.programs.create', 'backend.programs.edit'])">
                             {{ __('Programs') }}
                         </x-nav-link>
                     @endrole
                     @role(['admin'])
-                        <x-nav-link :href="route('users.index')" :active="request()->routeIs(['users.index', 'users.create', 'users.edit'])">
+                        <x-nav-link :href="route('backend.users.index')" :active="request()->routeIs(['backend.users.index', 'backend.users.create', 'backend.users.edit'])">
                             {{ __('Users') }}
                         </x-nav-link>
                     @endrole
@@ -95,26 +95,26 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link :href="route('backend.dashboard')" :active="request()->routeIs('backend.dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
             @role(['admin'])
-                <x-responsive-nav-link :href="route('areas.index')" :active="request()->routeIs(['areas.index', 'areas.create', 'areas.edit'])">
+                <x-responsive-nav-link :href="route('backend.areas.index')" :active="request()->routeIs(['backend.areas.index', 'backend.areas.create', 'backend.areas.edit'])">
                     {{ __('Areas') }}
                 </x-responsive-nav-link>
             @endrole
             @role(['admin', 'faculty'])
-                <x-responsive-nav-link :href="route('articles.index')" :active="request()->routeIs(['articles.index', 'articles.create', 'articles.edit'])">
+                <x-responsive-nav-link :href="route('backend.articles.index')" :active="request()->routeIs(['backend.articles.index', 'backend.articles.create', 'backend.articles.edit'])">
                     {{ __('Articles') }}
                 </x-responsive-nav-link>
             @endrole
             @role(['admin'])
-                <x-responsive-nav-link :href="route('programs.index')" :active="request()->routeIs(['programs.index', 'programs.create', 'programs.edit'])">
+                <x-responsive-nav-link :href="route('backend.programs.index')" :active="request()->routeIs(['backend.programs.index', 'backend.programs.create', 'backend.programs.edit'])">
                     {{ __('Programs') }}
                 </x-responsive-nav-link>
             @endrole
             @role(['admin'])
-                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs(['users.index', 'users.create', 'users.edit'])">
+                <x-responsive-nav-link :href="route('backend.users.index')" :active="request()->routeIs(['backend.users.index', 'backend.users.create', 'backend.users.edit'])">
                     {{ __('Users') }}
                 </x-responsive-nav-link>
             @endrole

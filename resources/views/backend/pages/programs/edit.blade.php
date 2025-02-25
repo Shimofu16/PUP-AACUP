@@ -3,7 +3,7 @@
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
             {{ __('Edit Program') }}
         </h2>
-        <a href="{{ route('programs.index') }}">
+        <a href="{{ route('backend.programs.index') }}">
             <x-primary-button>
                 {{ __('Back to list') }}
             </x-primary-button>

@@ -1,10 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Assign Area') }}
-
+            {{ __('Create Article') }}
         </h2>
-        <a href="{{ route('areas.index') }}">
+        <a href="{{ route('backend.articles.index') }}">
             <x-primary-button>
                 {{ __('Back to list') }}
             </x-primary-button>
@@ -13,7 +12,7 @@
 
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="bg-white shadow-sm sm:rounded-lg sm:p-6 lg:p-8">
-            @livewire('areas.create-area')
+            @livewire('articles.create-article')
         </div>
     </div>
 </x-app-layout>

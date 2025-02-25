@@ -37,7 +37,7 @@ class ListUser extends Component implements HasForms, HasTable
             ])
             ->actions([
                 EditAction::make()
-                    ->url(fn(User $record) => route('users.edit', $record))
+                    ->url(fn(User $record) => route('backend.users.edit', $record))
                     ->icon('heroicon-o-pencil')
                     ->label('Edit'),
 
