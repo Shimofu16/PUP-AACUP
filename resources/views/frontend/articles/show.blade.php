@@ -28,7 +28,7 @@
             <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                 @foreach($areas as $key => $area)
                     <a href="{{ route('area.show', ['program_code' => $program_code, 'area' => $key]) }}"
-                        class="text-center py-2 rounded-lg border-2 border-maroon-700 hover:bg-maroon-800 focus:outline-none focus:ring-4 focus:ring-maroon-300 {{ $article->area == $key ? 'bg-maroon-700 text-white' : 'bg-transparent text-maroon-700' }}">
+                        class="text-center py-2 rounded-lg border-2 border-maroon-700 hover:bg-maroon-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-maroon-300 {{ $article->area == $key ? 'bg-maroon-700 text-white' : 'bg-transparent text-maroon-700' }}">
                         {{ $key }}
                     </a>
                 @endforeach
