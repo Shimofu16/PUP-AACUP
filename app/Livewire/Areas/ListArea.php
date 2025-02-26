@@ -59,7 +59,7 @@ class ListArea extends Component implements HasForms, HasTable
             ->emptyStateActions([
                 Action::make('create')
                     ->label('Asign area')
-                    ->url(route('areas.create'))
+                    ->url(route('backend.areas.create'))
                     ->icon('heroicon-m-plus')
                     ->button(),
             ])
