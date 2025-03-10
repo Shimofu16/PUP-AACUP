@@ -18,6 +18,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
 use Filament\Tables\Concerns\InteractsWithTable;
 
 class ListProgram extends Component implements HasForms, HasTable
@@ -65,7 +66,14 @@ class ListProgram extends Component implements HasForms, HasTable
                 DeleteAction::make()
                     ->icon('heroicon-o-trash')
                     ->label('Delete')
-                    ->action(fn(Program $record) => $record->delete())
+                    ->action(function(Program $record) {
+                        $record->delete();
+                        Notification::make()
+                            ->title('Deleted successfully')
+                            ->body('Program has been deleted successfully.')
+                            ->success()
+                            ->send();
+                    })
                     ->requiresConfirmation(),
 
 

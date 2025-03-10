@@ -17,6 +17,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Filters\SelectFilter;
 
@@ -32,11 +33,14 @@ class ListArea extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('user.name')->searchable(),
                 TextColumn::make('areas')
+                    ->listWithLineBreaks()
+                    ->bulleted()
+                    ->limitList(3)
                     ->searchable(),
                 TextColumn::make('programs')
 
                     ->searchable(),
-        ])
+            ])
             ->filters([
                 SelectFilter::make('area')
                     ->options(AreaEnum::toArray())
@@ -51,7 +55,15 @@ class ListArea extends Component implements HasForms, HasTable
                 DeleteAction::make()
                     ->icon('heroicon-o-trash')
                     ->label('Delete')
-                    ->action(fn(Area $record) => $record->delete())
+                    ->action(
+                        function(Area $record){
+                            $record->delete();
+                            Notification::make()
+                                ->title('Deleted successfully')
+                                ->body('Article has been deleted successfully.')
+                                ->success()->send();
+                        }
+                    )
                     ->requiresConfirmation(),
             ])
             ->emptyStateHeading('No areas found')

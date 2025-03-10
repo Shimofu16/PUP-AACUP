@@ -41,10 +41,27 @@
                         <ul class="py-2 text-sm text-gray-700">
                             @if (count($programs) > 0)
                                 @foreach ($programs as $program)
-                                    <li>
-                                        <a href="{{ route('programs.show', ['program_code' => $program->code]) }}"
-                                            class="block px-4 py-2 hover:bg-maroon-700 hover:text-white">{{ $program->name }}</a>
+                                    <li class="relative">
+                                        <!-- Program Item with Clickable Toggle -->
+                                        <button class="program-toggle w-full text-left px-4 py-2 hover:bg-maroon-700 hover:text-white flex justify-between items-center">
+                                            {{ $program->name }}
+                                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </button>
+                                        <!-- Areas Dropdown -->
+                                        <ul class="areas-dropdown hidden absolute left-0 top-full w-full bg-white shadow-lg rounded-lg z-20">
+                                            @foreach ($areas as $key  => $area)
+                                                <li>
+                                                    <a href="{{ route('area.show', ['program_code' => $program->code, 'area' => $area]) }}"
+                                                        class="block px-4 py-2 hover:bg-maroon-700 hover:text-white">
+                                                        {{ $area }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     </li>
+                                    <hr class="my-2 border-gray-200">
                                 @endforeach
                             @else
                                 <li>
@@ -68,28 +85,49 @@
 
 <!-- JavaScript -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const navbarToggle = document.getElementById("navbar-toggle");
-        const navbarDropdown = document.getElementById("navbar-dropdown");
-        const dropdownToggle = document.getElementById("dropdown-toggle");
-        const programsDropdown = document.getElementById("programsDropdown");
+document.addEventListener("DOMContentLoaded", function () {
+    const navbarToggle = document.getElementById("navbar-toggle");
+    const navbarDropdown = document.getElementById("navbar-dropdown");
+    const dropdownToggle = document.getElementById("dropdown-toggle");
+    const programsDropdown = document.getElementById("programsDropdown");
 
-        // Toggle mobile menu
-        navbarToggle.addEventListener("click", function () {
-            navbarDropdown.classList.toggle("hidden");
+    // Toggle mobile menu
+    navbarToggle.addEventListener("click", function () {
+        navbarDropdown.classList.toggle("hidden");
+    });
+
+    // Toggle dropdown inside mobile menu (only for mobile)
+    dropdownToggle.addEventListener("click", function (event) {
+        event.stopPropagation(); // Prevents click from closing the menu immediately
+        programsDropdown.classList.toggle("hidden");
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+        if (!dropdownToggle.contains(event.target) && !programsDropdown.contains(event.target)) {
+            programsDropdown.classList.add("hidden");
+        }
+    });
+
+    // Toggle areas dropdown on program item click
+    const programToggles = document.querySelectorAll(".program-toggle");
+    programToggles.forEach((toggle) => {
+        toggle.addEventListener("click", function (event) {
+            event.stopPropagation(); // Prevent event from bubbling up
+            const areasDropdown = toggle.nextElementSibling; // Get the associated areas dropdown
+            areasDropdown.classList.toggle("hidden"); // Toggle visibility
         });
+    });
 
-        // Toggle dropdown inside mobile menu (only for mobile)
-        dropdownToggle.addEventListener("click", function (event) {
-            event.stopPropagation(); // Prevents click from closing the menu immediately
-            programsDropdown.classList.toggle("hidden");
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function (event) {
-            if (!dropdownToggle.contains(event.target) && !programsDropdown.contains(event.target)) {
-                programsDropdown.classList.add("hidden");
+    // Close areas dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+        programToggles.forEach((toggle) => {
+            const areasDropdown = toggle.nextElementSibling;
+            if (!toggle.contains(event.target)) {
+                areasDropdown.classList.add("hidden");
             }
         });
     });
+});
 </script>
+

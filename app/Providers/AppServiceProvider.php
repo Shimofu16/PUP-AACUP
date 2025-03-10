@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\AreaEnum;
 use App\Models\Program;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
         // check if the table exists
         if (Schema::hasTable('programs')) {
             View::share('programs', Program::all());
+            View::share('areas', AreaEnum::toLabels());
+
         }
     }
 }

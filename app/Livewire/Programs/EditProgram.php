@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
 
 class EditProgram extends Component implements HasForms
 {
@@ -22,7 +23,7 @@ class EditProgram extends Component implements HasForms
 
     public function mount(Program $program): void
     {
-        $this->record = $program; 
+        $this->record = $program;
         $this->form->fill($this->record->attributesToArray());
     }
 
@@ -71,15 +72,11 @@ class EditProgram extends Component implements HasForms
         $this->record->update($data);
 
 
-        $this->dispatch('swal', [
-            'toast' => true,
-            'position' => 'top-end',
-            'showConfirmButton' => false,
-            'timer' => 3000,
-            'title' => 'Success!',
-            'text' => 'Program successfully updated.',
-            'icon' => 'success'
-        ]);
+        Notification::make()
+        ->title('Saved successfully')
+        ->body('Program has been updated successfully.')
+        ->success()
+        ->send();
 
 
         $this->redirect(route('backend.programs.index'), true);

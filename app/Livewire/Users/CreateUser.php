@@ -7,6 +7,7 @@ use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 
@@ -50,15 +51,12 @@ class CreateUser extends Component implements HasForms
         $record = User::create($data);
         $record->markEmailAsVerified();
         $record->assignRole('faculty');
-        $this->dispatch('swal', [
-            'toast' => true,
-            'position' => 'top-end',
-            'showConfirmButton' => false,
-            'timer' => 3000,
-            'title' => 'Success!',
-            'text' => 'User successfully created.',
-            'icon' => 'success'
-        ]);
+
+        Notification::make()
+            ->title('Created successfully')
+            ->body('User has been created successfully.')
+            ->success()
+            ->send();
 
         $this->redirect(route('backend.users.index'), true);
     }

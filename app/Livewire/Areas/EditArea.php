@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 
@@ -43,7 +44,7 @@ class EditArea extends Component implements HasForms
                     ->preload(),
                 Select::make('user_id')
                     ->label('User')
-                    ->options(User::role('faculty')->pluck('name', 'id')->toArray())
+                    ->options(User::role(['faculty'])->pluck('name', 'id')->toArray())
                     ->searchable()
                     ->required()
                     ->preload(),
@@ -56,35 +57,19 @@ class EditArea extends Component implements HasForms
     public function save(): void
     {
 
-        // $query = Area::where(function ($query) use ($data) {
-        //     $query->where('area', $data['area'])
-        //         ->orWhere('user_id', $data['user_id']);
-        // });
-
-        // if ($query->exists()) {
-        //     $this->dispatch('swal', [
-        //         'toast' => true,
-        //         'position' => 'top-end',
-        //         'showConfirmButton' => false,
-        //         'timer' => 3000,
-        //         'title' => 'Duplicate Entry!',
-        //         'text' => 'This area or user already exists.',
-        //         'icon' => 'error'
-        //     ]);
-        //     return;
-        // }
+        $this->data['areas'] = array_map(function ($area) {
+            if (AreaEnum::from($area + 1)) {
+                return AreaEnum::from($area + 1)->label;
+            }
+        }, $this->data['areas']);
 
         Area::create($this->data);
 
-        $this->dispatch('swal', [
-            'toast' => true,
-            'position' => 'top-end',
-            'showConfirmButton' => false,
-            'timer' => 3000,
-            'title' => 'Success!',
-            'text' => 'Area successfully created.',
-            'icon' => 'success'
-        ]);
+        Notification::make()
+        ->title('Saved successfully')
+        ->body('Area has been updated successfully.')
+        ->success()
+        ->send();
 
         $this->redirect(route('backend.areas.index'), true);
     }

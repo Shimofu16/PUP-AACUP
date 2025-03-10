@@ -4,7 +4,7 @@
     <div class="relative w-full">
         <div class="relative">
             <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->name }}"
-            class="h-[400px] w-full object-fill shadow-lg">
+            class="h-[600px] w-full object-fill shadow-lg">
             <div class="absolute inset-0 bg-gray-600 opacity-50"></div>
         </div>
         <div class="absolute bottom-5 left-5 rounded-tl-lg p-2 text-white ">
@@ -21,7 +21,7 @@
         <div class="mt-6 mb-10">
             <h1 class="border-b-3 border-maroon-700 pb-2 text-3xl font-bold text-gray-800">Areas under survey</h1>
             <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                @forelse ($program->articles()->orderBy('area', 'asc')->get() as $article)
+                @forelse ($program->articles()->where('status', 'accepted')->orderBy('area', 'asc')->get() as $article)
                     <div class="rounded-lg bg-white p-4 shadow-sm">
                         <img src="{{ asset('storage/' . $article->image) }}" alt="{{ $article->name }}"
                             class="h-[200px] w-full rounded-lg object-fill shadow-lg">
@@ -29,7 +29,7 @@
                                 class="underline">
                                 <h1 class="mb-3 mt-2 text-xl font-bold text-gray-800">{{ $article->area }}</h1>
                                 <h1 class="mb-3 mt-2 text-xltext-gray-800">{{ $article->name }}</h1>
-                                 
+
                                </a>
 
                     </div>
@@ -40,6 +40,6 @@
                 @endforelse
             </div>
         </div>
-     
+
     </section>
 @endsection

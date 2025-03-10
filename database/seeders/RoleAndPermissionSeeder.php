@@ -41,6 +41,12 @@ class RoleAndPermissionSeeder extends Seeder
             'delete_article',
         ]);
 
+        $role = Role::create(['name' => 'committee_reviewer']);
+        $role->givePermissionTo([
+            'view_article',
+            'edit_article',
+            'delete_article',
+        ]);
          $role = Role::create(['name' => 'admin']);
          $role->givePermissionTo(Permission::all());
 

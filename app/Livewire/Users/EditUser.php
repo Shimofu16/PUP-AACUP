@@ -7,6 +7,7 @@ use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 
@@ -48,15 +49,11 @@ class EditUser extends Component implements HasForms
 
         $this->record->update($data);
 
-        $this->dispatch('swal', [
-            'toast' => true,
-            'position' => 'top-end',
-            'showConfirmButton' => false,
-            'timer' => 3000,
-            'title' => 'Success!',
-            'text' => 'User successfully updated.',
-            'icon' => 'success'
-        ]);
+        Notification::make()
+        ->title('Saved successfully')
+        ->body('User has been updated successfully.')
+        ->success()
+        ->send();
 
         $this->redirect(route('backend.users.index'), true);
     }

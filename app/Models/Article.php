@@ -16,6 +16,8 @@ class Article extends Model
         'document',
         'image',
         'description',
+        'status',
+        'reason'
     ];
     public function program():BelongsTo
     {

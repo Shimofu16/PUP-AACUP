@@ -21,8 +21,8 @@ class ProgramSeeder extends Seeder
                 'image' => ''
             ],
             [
-                'code' => 'BBTE',
-                'name' => 'Bachelor in Business Teacher Education',
+                'code' => 'BTLED',
+                'name' => 'Bachelor of Technology and Livelihood Education',
                 'description' => '',
                 'image' => ''
             ],

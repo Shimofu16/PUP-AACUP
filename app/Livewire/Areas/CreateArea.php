@@ -13,6 +13,8 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
+use Filament\Forms\Components\Html;
+use Filament\Notifications\Notification;
 
 class CreateArea extends Component implements HasForms
 {
@@ -29,11 +31,13 @@ class CreateArea extends Component implements HasForms
     {
         return $form
             ->schema([
+
                 Select::make('areas')
-                    ->options(AreaEnum::toArray())
+                    ->options(AreaEnum::toLabels())
                     ->multiple()
                     ->required()
                     ->searchable(),
+
                 Select::make('program_ids')
                     ->label('Programs')
                     ->options(Program::pluck('name', 'id')->toArray())
@@ -43,7 +47,7 @@ class CreateArea extends Component implements HasForms
                     ->preload(),
                 Select::make('user_id')
                     ->label('User')
-                    ->options(User::role('faculty')->pluck('name', 'id')->toArray())
+                    ->options(User::role(['faculty'])->pluck('name', 'id')->toArray())
                     ->searchable()
                     ->required()
                     ->preload(),
@@ -60,7 +64,13 @@ class CreateArea extends Component implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
-
+        // transform keys from areas and use AreaEnum::toLabels()
+        $data['areas'] = array_map(function ($area) {
+            if (AreaEnum::from($area + 1)) {
+                return AreaEnum::from($area + 1)->label;
+            }
+        }, $data['areas']);
+        // dd($data);
         // foreach ($data['area'] as $area) {
         //     // if (Area::where('area', $area)->where('user_id', $data['user_id'])->exists()) {
         //     //     $this->dispatch('swal', [
@@ -82,15 +92,13 @@ class CreateArea extends Component implements HasForms
             'user_id' => $data['user_id'],
         ]);
 
-        $this->dispatch('swal', [
-            'toast' => true,
-            'position' => 'top-end',
-            'showConfirmButton' => false,
-            'timer' => 3000,
-            'title' => 'Success!',
-            'text' => 'Area successfully created.',
-            'icon' => 'success'
-        ]);
+
+
+        Notification::make()
+            ->title('Created successfully')
+            ->body('Area has been created successfully.')
+            ->success()
+            ->send();
 
         $this->redirect(route('backend.areas.index'), true);
     }

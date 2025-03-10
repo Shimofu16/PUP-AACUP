@@ -17,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
 
 class EditArticle extends Component implements HasForms
 {
@@ -47,7 +48,7 @@ class EditArticle extends Component implements HasForms
 
                 Select::make('program_id')
                     ->label('Program')
-                    ->options(auth()->user()->hasRole('faculty') ? Program::whereIn('id', auth()->user()->area->program_ids)->pluck('name', 'id')->toArray() : Program::pluck('name', 'id')->toArray())
+                    ->options(auth()->user()->hasRole(['faculty']) ? Program::whereIn('id', auth()->user()->area->program_ids)->pluck('name', 'id')->toArray() : Program::pluck('name', 'id')->toArray())
                     ->searchable()
                     ->required()
                     ->preload()
@@ -55,7 +56,7 @@ class EditArticle extends Component implements HasForms
                     ->afterStateUpdated(fn($state) => $this->updateUserOptions($state, 'program_id')),
 
                 Select::make('area')
-                    ->options(auth()->user()->hasRole('faculty') ? auth()->user()->area->areas : AreaEnum::toArray())
+                    ->options(auth()->user()->hasRole(['faculty']) ? auth()->user()->area->areas : AreaEnum::toArray())
                     ->required()
                     ->searchable()
                     ->live()
@@ -63,11 +64,11 @@ class EditArticle extends Component implements HasForms
 
                 Select::make('user_id')
                     ->label('User')
-                    ->default(auth()->user()->hasRole('faculty') ? auth()->user()->id : null)
+                    ->default(auth()->user()->hasRole(['faculty']) ? auth()->user()->id : null)
                     ->options(fn() => $this->users)
                     ->searchable()
                     ->required()
-                    ->disabled(auth()->user()->hasRole('faculty'))
+                    ->disabled(auth()->user()->hasRole(['faculty']))
                     ->preload(),
 
                 FileUpload::make('document')
@@ -108,12 +109,12 @@ class EditArticle extends Component implements HasForms
             $this->area = $state;
         }
 
-        if (auth()->user()->hasRole('faculty')) {
+        if (auth()->user()->hasRole(['faculty'])) {
             $this->users = User::where('id', auth()->user()->id)->pluck('name', 'id')->toArray();
             return;
         }
 
-        $query = User::query()->role('faculty');
+        $query = User::query()->role(['faculty']);
 
         if ($this->program_id) {
             $query->whereHas('area', function ($q) {
@@ -122,8 +123,10 @@ class EditArticle extends Component implements HasForms
         }
 
         if ($this->area) {
-            $query->whereHas('area', function ($q) {
-                $q->whereJsonContains('areas', $this->area);
+            // find the label of the area selected
+            $area = AreaEnum::from($this->area + 1);
+            $query->whereHas('area', function ($q) use ($area) {
+                $q->whereJsonContains('areas', $area->label);
             });
         }
 
@@ -132,19 +135,14 @@ class EditArticle extends Component implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
-
+        $data['area'] = AreaEnum::from($data['area'] + 1)->label;
         $this->record->update($data);
 
-        $this->dispatch('swal', [
-            'toast' => true,
-            'position' => 'top-end',
-            'showConfirmButton' => false,
-            'timer' => 3000,
-            'title' => 'Success!',
-            'text' => 'Article successfully updated.',
-            'icon' => 'success'
-        ]);
-
+        Notification::make()
+            ->title('Saved successfully')
+            ->body('Article has been updated successfully.')
+            ->success()
+            ->send();
         $this->redirect(route('backend.articles.index'), true);
     }
 

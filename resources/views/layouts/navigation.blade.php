@@ -17,14 +17,14 @@
                     </x-nav-link>
                     @role(['admin'])
                         <x-nav-link :href="route('backend.areas.index')" :active="request()->routeIs(['backend.areas.index', 'backend.areas.create', 'backend.areas.edit'])">
-                            {{ __('Areas') }}
+                            {{ __('User Assignment') }}
                         </x-nav-link>
                     @endrole
-                    @role(['admin', 'faculty'])
+                    @hasanyrole('admin|faculty|committee_reviewer')
                         <x-nav-link :href="route('backend.articles.index')" :active="request()->routeIs(['backend.articles.index', 'backend.articles.create', 'backend.articles.edit'])">
-                            {{ __('Articles') }}
+                            {{ __('Document Uploading') }}
                         </x-nav-link>
-                    @endrole
+                    @endhasanyrole
                     @role(['admin'])
                         <x-nav-link :href="route('backend.programs.index')" :active="request()->routeIs(['backend.programs.index', 'backend.programs.create', 'backend.programs.edit'])">
                             {{ __('Programs') }}
@@ -44,7 +44,8 @@
                     <x-slot name="trigger">
                         <button
                             class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md hover:text-gray-700 focus:outline-none">
-                            <div>{{ Auth::user()->name }}</div>
+                            <div>{{ Auth::user()->name }}
+                            </div>
 
                             <div class="ms-1">
                                 <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"

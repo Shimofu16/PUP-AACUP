@@ -23,7 +23,7 @@ Route::prefix('programs')->name('programs.')->group(function(){
     Route::get('/', function(){
         return view('frontend.programs.index');
     })->name('index');
-    
+
     Route::get('/{program_code}', function(string $program_code){
         $program = Program::where('code', $program_code)->first();
         return view('frontend.programs.show', compact('program'));
@@ -33,13 +33,15 @@ Route::prefix('area')->name('area.')->group(function(){
     Route::get('/', function(){
         return view('frontend.articles.index');
     })->name('index');
-    
+
     Route::get('/{program_code}/{area}', function(string $program_code, string $area){
         $areas = AreaEnum::toArray();
 
         $article = Article::whereHas('program', function($query) use ($program_code){
             $query->where('code', $program_code);
-        })->where('area', $area)->first();
+        })->where('area', $area)->where('status', 'accepted')->first();
+
+
         return view('frontend.articles.show', compact('article', 'areas', 'program_code'));
     })->name('show');
 

@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('document');
             $table->string('image');
             $table->longText('description');
+            $table->longText('reason')->nullable();
+            $table->string('status')->default('pending');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

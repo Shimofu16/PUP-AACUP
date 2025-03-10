@@ -33,10 +33,10 @@
 
 <body class="font-sans antialiased bg-gray-100">
     <div class="min-h-screen">
-        {{-- nav --}}
-        @include('frontend.layouts.navbar')
-        {{-- contents --}}
         <main>
+            {{-- nav --}}
+            @include('frontend.layouts.navbar')
+            {{-- contents --}}
             @yield('contents')
         </main>
     </div>

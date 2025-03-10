@@ -21,16 +21,32 @@ class AreaEnum extends Enum
     protected static function values(): array
     {
         return [
-            'area1' => "Area 1",
-            'area2' => "Area 2",
-            'area3' => "Area 3",
-            'area4' => "Area 4",
-            'area5' => "Area 5",
-            'area6' => "Area 6",
-            'area7' => "Area 7",
-            'area8' =>  "Area 8",
-            'area9' =>  "Area 9",
-            'area10' =>  "Area 10",
+            'area1' => 1,
+            'area2' => 2,
+            'area3' => 3,
+            'area4' => 4,
+            'area5' => 5,
+            'area6' => 6,
+            'area7' => 7,
+            'area8' => 8,
+            'area9' => 9,
+            'area10' => 10,
+        ];
+    }
+
+    protected static function labels(): array
+    {
+        return [
+            'area1' => "Area 1 - Vision, Mission, Goals and Objectives",
+            'area2' => "Area 2 – Faculty",
+            'area3' => "Area 3 – Curriculum and Instruction",
+            'area4' => "Area 4 – Support to Students",
+            'area5' => "Area 5 – Research",
+            'area6' => "Area 6 – Extensions and Community Involvement",
+            'area7' => "Area 7 – Library",
+            'area8' => "Area 8 – Physical Plant and Facilities",
+            'area9' => "Area 9 – Laboratories",
+            'area10' => "Area 10 – Administration",
         ];
     }
 }

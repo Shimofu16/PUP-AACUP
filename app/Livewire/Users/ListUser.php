@@ -5,6 +5,7 @@ namespace App\Livewire\Users;
 use App\Models\User;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -44,7 +45,14 @@ class ListUser extends Component implements HasForms, HasTable
                 DeleteAction::make()
                     ->icon('heroicon-o-trash')
                     ->label('Delete')
-                    ->action(fn(User $record) => $record->delete())
+                    ->action(function(User $record)  {
+                        $record->delete();
+                        Notification::make()
+                            ->title('Deleted successfully')
+                            ->body('User has been deleted successfully.')
+                            ->success()
+                            ->send();
+                    })
                     ->requiresConfirmation(),
             ])
             ->bulkActions([
