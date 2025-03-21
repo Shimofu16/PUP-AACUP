@@ -52,6 +52,12 @@ class CreateUser extends Component implements HasForms
         $record->markEmailAsVerified();
         $record->assignRole('faculty');
 
+        activity()
+            ->event('created')
+            ->causedBy(auth()->user())
+            ->performedOn($record)
+            ->log('Created a user '. $record->name);
+
         Notification::make()
             ->title('Created successfully')
             ->body('User has been created successfully.')

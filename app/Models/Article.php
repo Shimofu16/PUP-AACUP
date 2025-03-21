@@ -11,7 +11,8 @@ class Article extends Model
     protected $fillable = [
         'program_id',
         'user_id',
-        'area',
+        'area_id',
+        'area_parameter_id',
         'name',
         'document',
         'image',
@@ -27,6 +28,16 @@ class Article extends Model
     public function user():BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function area():BelongsTo
+    {
+        return $this->belongsTo(Area::class, 'area_id');
+    }
+
+    public function parameter():BelongsTo
+    {
+        return $this->belongsTo(AreaParameter::class, 'area_parameter_id');
     }
 
 }

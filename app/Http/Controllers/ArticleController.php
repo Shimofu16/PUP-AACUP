@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 class ArticleController extends Controller
 {
@@ -12,7 +14,16 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        return view('backend.pages.articles.index');
+        $status = 'pending';
+        return view('backend.pages.articles.index', compact('status'));
+    }
+    /**
+     * Display a listing of the resource.
+     */
+    public function reviewed()
+    {
+       $status =['accepted', 'declined'];
+        return view('backend.pages.articles.index', compact('status'));
     }
 
     /**
@@ -37,7 +48,8 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        //
+        $previousUrl = url()->previous();
+        return view('backend.pages.articles.show', compact('article','previousUrl'));
     }
 
     /**

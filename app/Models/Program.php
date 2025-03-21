@@ -14,8 +14,13 @@ class Program extends Model
         'description',
     ];
 
-    public function articles():HasMany
+    public function articles(): HasMany
     {
         return $this->hasMany(Article::class, 'program_id');
+    }
+
+    public function users(): HasMany
+    {
+        return $this->hasMany(UserProgram::class, 'program_id');
     }
 }

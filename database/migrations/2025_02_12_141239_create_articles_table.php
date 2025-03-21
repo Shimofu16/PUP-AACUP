@@ -16,10 +16,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('program_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('area');
+            $table->foreignId('area_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('area_parameter_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('document');
             $table->string('image');
+            $table->string('video')->nullable();
             $table->longText('description');
             $table->longText('reason')->nullable();
             $table->string('status')->default('pending');

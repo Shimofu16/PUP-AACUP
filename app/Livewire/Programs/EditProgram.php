@@ -71,6 +71,11 @@ class EditProgram extends Component implements HasForms
 
         $this->record->update($data);
 
+        activity()
+            ->event('updated')
+            ->causedBy(auth()->user())
+            ->performedOn($this->record)
+            ->log('Updated program ' . $this->record->name);
 
         Notification::make()
         ->title('Saved successfully')

@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Area;
-use App\Models\User;
 use Illuminate\Http\Request;
 
-class AreaController extends Controller
+class ActivityLogController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('backend.pages.areas.index');
+        return view('backend.pages.activity-logs.index');
     }
 
     /**
@@ -21,7 +19,7 @@ class AreaController extends Controller
      */
     public function create()
     {
-        return view('backend.pages.areas.create');
+        //
     }
 
     /**
@@ -35,7 +33,7 @@ class AreaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Area $area)
+    public function show(string $id)
     {
         //
     }
@@ -43,15 +41,15 @@ class AreaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(string $id)
     {
-        return view('backend.pages.areas.edit', compact('user'));
+        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Area $area)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -59,7 +57,7 @@ class AreaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Area $area)
+    public function destroy(string $id)
     {
         //
     }

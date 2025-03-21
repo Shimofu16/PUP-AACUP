@@ -66,7 +66,12 @@ class ListProgram extends Component implements HasForms, HasTable
                 DeleteAction::make()
                     ->icon('heroicon-o-trash')
                     ->label('Delete')
-                    ->action(function(Program $record) {
+                    ->action(function (Program $record) {
+                        activity()
+                            ->event('deleted')
+                            ->causedBy(auth()->user())
+                            ->performedOn($record)
+                            ->log('Deleted a program ' . $record->name);
                         $record->delete();
                         Notification::make()
                             ->title('Deleted successfully')

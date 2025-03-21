@@ -45,7 +45,13 @@ class ListUser extends Component implements HasForms, HasTable
                 DeleteAction::make()
                     ->icon('heroicon-o-trash')
                     ->label('Delete')
-                    ->action(function(User $record)  {
+                    ->action(function (User $record) {
+                        activity()
+                            ->event('deleted')
+                            ->causedBy(auth()->user())
+                            ->performedOn($record)
+                            ->log('Deleted a user ' . $record->name);
+                            
                         $record->delete();
                         Notification::make()
                             ->title('Deleted successfully')

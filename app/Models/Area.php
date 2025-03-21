@@ -4,30 +4,21 @@ namespace App\Models;
 
 use App\Casts\Json;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Area extends Model
 {
     protected $fillable = [
-        'areas',
-        'program_ids',
-        'user_id'
+        'name',
     ];
 
-    // cast
-    protected $casts = [
-        'areas' =>  Json::class,
-        'program_ids' =>  Json::class,
-    ];
-
-    public function getProgramsAttribute()
+    public function parameters(): HasMany
     {
-        $programNames = Program::whereIn('id', $this->program_ids)->pluck('code')->toArray();
-        return implode(', ', $programNames);
+        return $this->hasMany(AreaParameter::class, 'area_id');
     }
 
-    public function user(): BelongsTo
+    public function users(): HasMany
     {
-       return $this->belongsTo(User::class, 'user_id');
+        return $this->hasMany(UserArea::class, 'area_id');
     }
 }

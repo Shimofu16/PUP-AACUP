@@ -18,12 +18,18 @@ class EditArea extends Component implements HasForms
 {
     use InteractsWithForms;
     public ?array $data = [];
-    public Area $record;
+    public User $record;
 
-    public function mount(Area $area): void
+    public function mount(User $user): void
     {
-        $this->record = $area;
-        $this->form->fill($area->attributesToArray());
+        $this->record = $user;
+        $this->form->fill(
+            [
+                'areas' => $user->areas->pluck('area_id')->toArray(),
+                'programs' => $user->programs->pluck('program_id')->toArray(),
+                'user_id' => $user->id,
+            ]
+        );
     }
 
     public function form(Form $form): Form
@@ -31,11 +37,12 @@ class EditArea extends Component implements HasForms
         return $form
             ->schema([
                 Select::make('areas')
-                    ->options(AreaEnum::toArray())
+                    ->options(Area::pluck('name', 'id')->toArray())
                     ->multiple()
                     ->required()
-                    ->searchable(),
-                Select::make('program_ids')
+                    ->searchable()
+                    ->preload(),
+                Select::make('programs')
                     ->label('Programs')
                     ->options(Program::pluck('name', 'id')->toArray())
                     ->multiple()
@@ -50,26 +57,43 @@ class EditArea extends Component implements HasForms
                     ->preload(),
             ])
             ->columns(2)
-            ->statePath('data')
-            ->model($this->record);
+            ->statePath('data');
     }
 
     public function save(): void
     {
 
-        $this->data['areas'] = array_map(function ($area) {
-            if (AreaEnum::from($area + 1)) {
-                return AreaEnum::from($area + 1)->label;
-            }
-        }, $this->data['areas']);
+        $this->validate([
+            'data.areas' => 'required',
+            'data.programs' => 'required',
+            'data.user_id' => 'required',
+        ]);
 
-        Area::create($this->data);
+        $data = $this->form->getState();
+        $user = User::find($data['user_id']);
+        $user->areas()->delete();
+        $user->programs()->delete();
 
+        foreach($data['areas'] as $area){
+            $user->areas()->create(['area_id' => $area]);
+        }
+
+        foreach($data['programs'] as $program){
+            $user->programs()->create(['program_id' => $program]);
+        }
         Notification::make()
-        ->title('Saved successfully')
-        ->body('Area has been updated successfully.')
-        ->success()
-        ->send();
+            ->title('Saved successfully')
+            ->body('Area has been updated successfully.')
+            ->success()
+            ->send();
+
+        //activity log
+        activity()
+        ->event('updated')
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->withProperties(['attributes' => $data])
+            ->log('Updated assigned areas and programs for user '.$user->name);
 
         $this->redirect(route('backend.areas.index'), true);
     }

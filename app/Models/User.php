@@ -50,13 +50,33 @@ class User extends Authenticatable
         ];
     }
 
-    public function area(): HasOne
+    public function getAssignedAreasAttribute()
     {
-        return $this->hasOne(Area::class, 'user_id');
+       $arrayAreas = [];
+         foreach ($this->areas as $area) {
+              $arrayAreas[] = $area->area->name;
+         }
+        //  return implode(', ', $arrayAreas);
+        return $arrayAreas;
     }
 
-    public function getAreasArray(): array
-    {
-        return $this->area()->area;
+    public function getAssignedProgramsAttribute(){
+        $arrayPrograms = [];
+        foreach ($this->programs as $program) {
+            $arrayPrograms[] = $program->program->name;
+        }
+        return $arrayPrograms;
     }
+    
+
+    public function areas(): HasMany
+    {
+        return $this->hasMany(UserArea::class, 'user_id');
+    }
+    public function programs(): HasMany
+    {
+        return $this->hasMany(UserProgram::class, 'user_id');
+    }
+
+
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Area;
+use App\Models\Program;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleAndPermissionSeeder::class,
             ProgramSeeder::class,
+            AreaSeeder::class
         ]);
         $role = Role::where('name', 'admin')->first();
         $user =  User::factory()->create([
@@ -29,6 +32,22 @@ class DatabaseSeeder extends Seeder
         $user =  User::factory()->create([
             'name' => 'pup-faculty',
             'email' => 'pup-faculty@pup-aaccup.com',
+        ]);
+        $user->assignRole($role);
+
+        $areas = Area::inRandomOrder()->take(5)->pluck('id');
+        $programs = Program::inRandomOrder()->take(5)->pluck('id');
+        foreach($areas as $area){
+            $user->areas()->create(['area_id' => $area]);
+        }
+        foreach($programs as $program){
+            $user->programs()->create(['program_id' => $program]);
+        }
+
+        $role = Role::where('name', 'faculty')->first();
+        $user =  User::factory()->create([
+            'name' => 'pup-faculty-2',
+            'email' => 'pup-faculty-2@pup-aaccup.com',
         ]);
         $user->assignRole($role);
 

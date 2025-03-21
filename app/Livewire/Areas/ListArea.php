@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Areas;
 
-use App\Enums\AreaEnum;
 use App\Models\Area;
+use App\Models\AreaUser;
 use App\Models\User;
 use Filament\Tables;
 use Livewire\Component;
@@ -28,27 +28,36 @@ class ListArea extends Component implements HasForms, HasTable
 
     public function table(Table $table): Table
     {
+        // dd(User::query()->with('areas')->first()->areas->pluck('area_id'));
         return $table
-            ->query(Area::query())
+            ->query(User::query()->whereHas('areas')->with('areas'))
             ->columns([
-                TextColumn::make('user.name')->searchable(),
-                TextColumn::make('areas')
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('assignedAreas')
+                    ->label('Assigned Areas')
                     ->listWithLineBreaks()
                     ->bulleted()
                     ->limitList(3)
+                    ->expandableLimitedList()
                     ->searchable(),
-                TextColumn::make('programs')
-
+                TextColumn::make('assignedPrograms')
+                    ->label('Assigned Programs')
+                    ->listWithLineBreaks()
+                    ->bulleted()
                     ->searchable(),
             ])
             ->filters([
-                SelectFilter::make('area')
-                    ->options(AreaEnum::toArray())
-                    ->label('Area')
+                // SelectFilter::make('area')
+                //     ->options(Area::pluck(
+                //         'name',
+                //         'id'
+                //     ))
+                //     ->label('Area')
+                //     ->relationship('areas', 'area_id'),
             ])
             ->actions([
                 EditAction::make()
-                    ->url(fn(Area $record): string => route('backend.areas.edit', $record))
+                    ->url(fn(User $record): string => route('backend.areas.edit', $record))
                     ->icon('heroicon-o-pencil')
                     ->label('Edit'),
 
@@ -56,11 +65,18 @@ class ListArea extends Component implements HasForms, HasTable
                     ->icon('heroicon-o-trash')
                     ->label('Delete')
                     ->action(
-                        function(Area $record){
-                            $record->delete();
+                        function (User $record) {
+                            //activity log
+                            activity()
+                                ->event('deleted')
+                                ->causedBy(auth()->user())
+                                ->performedOn($record)
+                                ->log('Deleted assigned area for ' . $record->name);
+                            $record->areas()->delete();
+                            $record->programs()->delete();
                             Notification::make()
                                 ->title('Deleted successfully')
-                                ->body('Article has been deleted successfully.')
+                                ->body('Assigned Area has been deleted successfully.')
                                 ->success()->send();
                         }
                     )

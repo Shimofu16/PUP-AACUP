@@ -53,9 +53,9 @@
                                         <ul class="areas-dropdown hidden absolute left-0 top-full w-full bg-white shadow-lg rounded-lg z-20">
                                             @foreach ($areas as $key  => $area)
                                                 <li>
-                                                    <a href="{{ route('area.show', ['program_code' => $program->code, 'area' => $area]) }}"
+                                                    <a href="{{ route('area.show', ['program_code' => $program->code, 'area' => $area->name]) }}"
                                                         class="block px-4 py-2 hover:bg-maroon-700 hover:text-white">
-                                                        {{ $area }}
+                                                        {{ $area->name }}
                                                     </a>
                                                 </li>
                                             @endforeach
@@ -76,6 +76,12 @@
                     <a href="{{ route('about.index') }}"
                         class="block rounded-sm px-3 py-2 text-gray-900 md:p-0 {{ request()->routeIs('about.index') ? 'text-maroon-700' : 'hover:bg-maroon-100 md:border-0 md:hover:bg-transparent md:hover:text-maroon-700' }}">
                         About PUP Calauan
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('login') }}"
+                        class="block rounded-sm px-3 py-2 text-gray-900 md:p-0 {{ request()->routeIs('login') ? 'text-maroon-700' : 'hover:bg-maroon-100 md:border-0 md:hover:bg-transparent md:hover:text-maroon-700' }}">
+                        Login
                     </a>
                 </li>
             </ul>

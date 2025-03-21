@@ -3,6 +3,8 @@
 namespace App\Livewire\Articles;
 
 use App\Enums\AreaEnum;
+use App\Models\Area;
+use App\Models\AreaParameter;
 use Filament\Forms;
 use App\Models\Article;
 use App\Models\Program;
@@ -34,6 +36,8 @@ class EditArticle extends Component implements HasForms
     public function mount(Article $article): void
     {
         $this->record = $article;
+        $this->area = $article->area_id;
+        $this->program_id = $article->program_id;
         $this->updateUserOptions();
         $this->form->fill($article->attributesToArray());
     }
@@ -46,21 +50,29 @@ class EditArticle extends Component implements HasForms
                     ->required()
                     ->maxLength(255),
 
-                Select::make('program_id')
+                    Select::make('program_id')
                     ->label('Program')
-                    ->options(auth()->user()->hasRole(['faculty']) ? Program::whereIn('id', auth()->user()->area->program_ids)->pluck('name', 'id')->toArray() : Program::pluck('name', 'id')->toArray())
+                    ->options(auth()->user()->hasRole(['faculty']) ?  Program::find(auth()->user()->programs()->pluck('program_id')->toArray())->pluck('name','id')->toArray() : Program::pluck('name', 'id')->toArray())
                     ->searchable()
                     ->required()
                     ->preload()
                     ->live()
                     ->afterStateUpdated(fn($state) => $this->updateUserOptions($state, 'program_id')),
 
-                Select::make('area')
-                    ->options(auth()->user()->hasRole(['faculty']) ? auth()->user()->area->areas : AreaEnum::toArray())
+                    Select::make('area_id')
+                    ->label('Area')
+                    ->options(auth()->user()->hasRole(['faculty']) ? Area::find(auth()->user()->areas()->pluck('area_id')->toArray())->pluck('name', 'id')->toArray() : Area::pluck('name', 'id')->toArray())
                     ->required()
                     ->searchable()
                     ->live()
-                    ->afterStateUpdated(fn($state) => $this->updateUserOptions($state, 'area')),
+                    ->afterStateUpdated(fn($state) => $this->updateUserOptions($state, 'area_id')),
+
+                Select::make('area_parameter_id')
+                    ->label('Area Parameter')
+                    ->options(fn() => $this->area ? AreaParameter::where('area_id', $this->area)->orderBy('name', 'asc')->pluck('name', 'id')->toArray() : [])
+                    ->required()
+                    ->searchable()
+                    ->live(),
 
                 Select::make('user_id')
                     ->label('User')
@@ -79,6 +91,9 @@ class EditArticle extends Component implements HasForms
                     ->directory(fn() => 'articles/' . Str::slug($this->data['name']))
                     ->image()
                     ->required(),
+                    FileUpload::make('video')
+                    ->directory(fn() => 'articles/' . Str::slug($this->data['name']))
+                    ->acceptedFileTypes(['video/mp4']),
                 RichEditor::make('description')
                     ->required()
                     ->toolbarButtons([
@@ -105,7 +120,7 @@ class EditArticle extends Component implements HasForms
     {
         if ($field === 'program_id') {
             $this->program_id = $state;
-        } elseif ($field === 'area') {
+        } elseif ($field === 'area_id') {
             $this->area = $state;
         }
 
@@ -117,16 +132,14 @@ class EditArticle extends Component implements HasForms
         $query = User::query()->role(['faculty']);
 
         if ($this->program_id) {
-            $query->whereHas('area', function ($q) {
-                $q->whereJsonContains('program_ids', $this->program_id);
+            $query->whereHas('programs', function ($q) {
+                $q->where('program_id', $this->program_id);
             });
         }
 
         if ($this->area) {
-            // find the label of the area selected
-            $area = AreaEnum::from($this->area + 1);
-            $query->whereHas('area', function ($q) use ($area) {
-                $q->whereJsonContains('areas', $area->label);
+            $query->whereHas('areas', function ($q){
+                $q->where('area_id', $this->area);
             });
         }
 
@@ -135,7 +148,6 @@ class EditArticle extends Component implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
-        $data['area'] = AreaEnum::from($data['area'] + 1)->label;
         $this->record->update($data);
 
         Notification::make()
@@ -143,6 +155,12 @@ class EditArticle extends Component implements HasForms
             ->body('Article has been updated successfully.')
             ->success()
             ->send();
+
+        activity()
+            ->event('updated')
+            ->causedBy(auth()->user())
+            ->performedOn($this->record)
+            ->log('Updated article '. $this->record->name);
         $this->redirect(route('backend.articles.index'), true);
     }
 

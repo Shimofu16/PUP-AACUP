@@ -33,12 +33,12 @@ class CreateArea extends Component implements HasForms
             ->schema([
 
                 Select::make('areas')
-                    ->options(AreaEnum::toLabels())
+                    ->options(Area::pluck('name', 'id')->toArray())
                     ->multiple()
                     ->required()
                     ->searchable(),
 
-                Select::make('program_ids')
+                Select::make('programs')
                     ->label('Programs')
                     ->options(Program::pluck('name', 'id')->toArray())
                     ->multiple()
@@ -63,42 +63,36 @@ class CreateArea extends Component implements HasForms
 
     public function save(): void
     {
-        $data = $this->form->getState();
-        // transform keys from areas and use AreaEnum::toLabels()
-        $data['areas'] = array_map(function ($area) {
-            if (AreaEnum::from($area + 1)) {
-                return AreaEnum::from($area + 1)->label;
-            }
-        }, $data['areas']);
-        // dd($data);
-        // foreach ($data['area'] as $area) {
-        //     // if (Area::where('area', $area)->where('user_id', $data['user_id'])->exists()) {
-        //     //     $this->dispatch('swal', [
-        //     //         'toast' => true,
-        //     //         'position' => 'top-end',
-        //     //         'showConfirmButton' => false,
-        //     //         'timer' => 3000,
-        //     //         'title' => 'Duplicate Entry!',
-        //     //         'text' => 'This area or user already exists.',
-        //     //         'icon' => 'error'
-        //     //     ]);
-        //     //     return;
-        //     // }
-        // }
-
-        $area = Area::create([
-            'areas' => $data['areas'],
-            'program_ids' => $data['program_ids'],
-            'user_id' => $data['user_id'],
+        $this->validate([
+            'data.areas' => 'required',
+            'data.programs' => 'required',
+            'data.user_id' => 'required',
         ]);
+        $data = $this->form->getState();
 
+        $user = User::find($data['user_id']);
 
+        foreach($data['areas'] as $area){
+            $user->areas()->create(['area_id' => $area]);
+        }
+
+        foreach($data['programs'] as $program){
+            $user->programs()->create(['program_id' => $program]);
+        }
 
         Notification::make()
             ->title('Created successfully')
             ->body('Area has been created successfully.')
             ->success()
             ->send();
+
+        //activity log
+        activity()
+            ->event('created')
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->withProperties(['attributes' => $data])
+            ->log('Assigned area and programs to user '. $user->name);
 
         $this->redirect(route('backend.areas.index'), true);
     }

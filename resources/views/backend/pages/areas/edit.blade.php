@@ -12,7 +12,7 @@
 
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="bg-white shadow-sm sm:rounded-lg sm:p-6 lg:p-8">
-            @livewire('areas.edit-area', ['area' => $area])
+            @livewire('areas.edit-area', ['user' => $user])
         </div>
     </div>
 </x-app-layout>
