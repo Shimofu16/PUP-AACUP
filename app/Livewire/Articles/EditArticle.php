@@ -50,16 +50,16 @@ class EditArticle extends Component implements HasForms
                     ->required()
                     ->maxLength(255),
 
-                    Select::make('program_id')
+                Select::make('program_id')
                     ->label('Program')
-                    ->options(auth()->user()->hasRole(['faculty']) ?  Program::find(auth()->user()->programs()->pluck('program_id')->toArray())->pluck('name','id')->toArray() : Program::pluck('name', 'id')->toArray())
+                    ->options(auth()->user()->hasRole(['faculty']) ?  Program::find(auth()->user()->programs()->pluck('program_id')->toArray())->pluck('name', 'id')->toArray() : Program::pluck('name', 'id')->toArray())
                     ->searchable()
                     ->required()
                     ->preload()
                     ->live()
                     ->afterStateUpdated(fn($state) => $this->updateUserOptions($state, 'program_id')),
 
-                    Select::make('area_id')
+                Select::make('area_id')
                     ->label('Area')
                     ->options(auth()->user()->hasRole(['faculty']) ? Area::find(auth()->user()->areas()->pluck('area_id')->toArray())->pluck('name', 'id')->toArray() : Area::pluck('name', 'id')->toArray())
                     ->required()
@@ -91,7 +91,7 @@ class EditArticle extends Component implements HasForms
                     ->directory(fn() => 'articles/' . Str::slug($this->data['name']))
                     ->image()
                     ->required(),
-                    FileUpload::make('video')
+                FileUpload::make('video')
                     ->directory(fn() => 'articles/' . Str::slug($this->data['name']))
                     ->acceptedFileTypes(['video/mp4']),
                 RichEditor::make('description')
@@ -138,7 +138,7 @@ class EditArticle extends Component implements HasForms
         }
 
         if ($this->area) {
-            $query->whereHas('areas', function ($q){
+            $query->whereHas('areas', function ($q) {
                 $q->where('area_id', $this->area);
             });
         }
@@ -148,6 +148,24 @@ class EditArticle extends Component implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
+
+        // Check for duplicate article name, excluding the current article
+        $duplicate = Article::where('program_id', $data['program_id'])
+            ->where('area_id', $data['area_id'])
+            ->where('area_parameter_id', $data['area_parameter_id'])
+            ->where('id', '!=', $this->record->id)
+            ->exists();
+
+        if ($duplicate) {
+            Notification::make()
+                ->title('Duplicate Article')
+                ->body('An article with the same name already exists.')
+                ->danger()
+                ->send();
+
+            return;
+        }
+
         $this->record->update($data);
 
         Notification::make()
@@ -160,7 +178,8 @@ class EditArticle extends Component implements HasForms
             ->event('updated')
             ->causedBy(auth()->user())
             ->performedOn($this->record)
-            ->log('Updated article '. $this->record->name);
+            ->log('Updated article ' . $this->record->name);
+
         $this->redirect(route('backend.articles.index'), true);
     }
 

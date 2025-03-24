@@ -46,7 +46,7 @@ class CreateArticle extends Component implements HasForms
 
                 Select::make('program_id')
                     ->label('Program')
-                    ->options(auth()->user()->hasRole(['faculty']) ?  auth()->user()->programs()->pluck('program_id')->toArray() : Program::pluck('name', 'id')->toArray())
+                    ->options(auth()->user()->hasRole(['faculty']) ?  Program::find(auth()->user()->programs()->pluck('program_id')->toArray())->pluck('name','id')->toArray() : Program::pluck('name', 'id')->toArray())
                     ->searchable()
                     ->required()
                     ->preload()
@@ -55,7 +55,7 @@ class CreateArticle extends Component implements HasForms
 
                 Select::make('area_id')
                     ->label('Area')
-                    ->options(auth()->user()->hasRole(['faculty']) ? auth()->user()->areas()->pluck('area_id')->toArray() : Area::pluck('name', 'id')->toArray())
+                    ->options(auth()->user()->hasRole(['faculty']) ? Area::find(auth()->user()->areas()->pluck('area_id')->toArray())->pluck('name', 'id')->toArray()  : Area::pluck('name', 'id')->toArray())
                     ->required()
                     ->searchable()
                     ->live()
@@ -115,13 +115,29 @@ class CreateArticle extends Component implements HasForms
     {
         $data = $this->form->getState();
 
+        // Check if an article with the same program, area, and area parameter already exists
+        $existingArticle = Article::where('program_id', $data['program_id'])
+            ->where('area_id', $data['area_id'])
+            ->where('area_parameter_id', $data['area_parameter_id'])
+            ->first();
+
+        if ($existingArticle) {
+            Notification::make()
+                ->title('Duplicate Entry')
+                ->body('An article with the same program, area, and area parameter already exists.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
         $article = Article::create($data);
 
         Notification::make()
-        ->title('Saved successfully')
-        ->body('Article has been created successfully.')
-        ->success()
-        ->send();
+            ->title('Saved successfully')
+            ->body('Article has been created successfully.')
+            ->success()
+            ->send();
 
         activity()
             ->event('created')
