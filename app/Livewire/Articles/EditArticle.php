@@ -180,7 +180,7 @@ class EditArticle extends Component implements HasForms
             ->performedOn($this->record)
             ->log('Updated article ' . $this->record->name);
 
-        $this->redirect(route('backend.articles.index'), true);
+        $this->redirect(route('backend.articles.pending'), true);
     }
 
     public function render(): View

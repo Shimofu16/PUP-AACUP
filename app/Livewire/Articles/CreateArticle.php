@@ -130,7 +130,10 @@ class CreateArticle extends Component implements HasForms
 
             return;
         }
-
+        if (auth()->user()->hasRole(['faculty'])) {
+            $data['user_id'] = auth()->user()->id;
+        }
+        // dd($data);
         $article = Article::create($data);
 
         Notification::make()
@@ -145,7 +148,7 @@ class CreateArticle extends Component implements HasForms
             ->performedOn($article)
             ->log('Created a new article '. $article->name);
 
-        $this->redirect(route('backend.articles.index'), true);
+        $this->redirect(route('backend.articles.pending'), true);
     }
 
     public function updateUserOptions($state = null, $field = null)

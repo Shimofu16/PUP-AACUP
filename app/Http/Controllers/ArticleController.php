@@ -12,18 +12,21 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function pending()
     {
         $status = 'pending';
-        return view('backend.pages.articles.index', compact('status'));
+        $title = 'Pending Documents';
+
+        return view('backend.pages.articles.index', compact('status', 'title'));
     }
     /**
      * Display a listing of the resource.
      */
     public function reviewed()
     {
-       $status =['accepted', 'declined'];
-        return view('backend.pages.articles.index', compact('status'));
+        $status = ['accepted', 'declined'];
+        $title = 'Reviewed Documents';
+        return view('backend.pages.articles.index', compact('status', 'title'));
     }
 
     /**
@@ -49,7 +52,7 @@ class ArticleController extends Controller
     public function show(Article $article)
     {
         $previousUrl = url()->previous();
-        return view('backend.pages.articles.show', compact('article','previousUrl'));
+        return view('backend.pages.articles.show', compact('article', 'previousUrl'));
     }
 
     /**

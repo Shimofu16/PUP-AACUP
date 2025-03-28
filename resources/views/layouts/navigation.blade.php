@@ -21,14 +21,21 @@
                         </x-nav-link>
                     @endrole
                     @hasanyrole('admin|faculty|committee_reviewer')
-                        <x-nav-link :href="route('backend.articles.index')" :active="request()->routeIs(['backend.articles.index', 'backend.articles.create', 'backend.articles.edit'])">
-                            {{ __('Document Uploading') }}
-                        </x-nav-link>
-                    @endhasanyrole
-                    @hasanyrole('admin|faculty|committee_reviewer')
-                        <x-nav-link :href="route('backend.articles.reviewed')" :active="request()->routeIs(['backend.articles.reviewed'])">
-                            {{ __('Reviewed Documents') }}
-                        </x-nav-link>
+                        <div class="relative group inline-flex">
+                            <x-nav-link href="#" class="cursor-pointer">
+                                {{ __('Documents') }}
+                            </x-nav-link>
+                            <div class="absolute hidden pt-2 group-hover:block top-12">
+                                <div class="w-48 bg-white rounded-md shadow-lg">
+                                    <x-dropdown-link :href="route('backend.articles.reviewed')" :active="request()->routeIs(['backend.articles.reviewed'])">
+                                        {{ __('Reviewed Documents') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('backend.articles.pending')" :active="request()->routeIs(['backend.articles.pending'])">
+                                        {{ __('Pending Documents') }}
+                                    </x-dropdown-link>
+                                </div>
+                            </div>
+                        </div>
                     @endhasanyrole
                     @role(['admin'])
                         <x-nav-link :href="route('backend.programs.index')" :active="request()->routeIs(['backend.programs.index', 'backend.programs.create', 'backend.programs.edit'])">
@@ -113,11 +120,7 @@
                     {{ __('Areas') }}
                 </x-responsive-nav-link>
             @endrole
-            @role(['admin', 'faculty'])
-                <x-responsive-nav-link :href="route('backend.articles.index')" :active="request()->routeIs(['backend.articles.index', 'backend.articles.create', 'backend.articles.edit'])">
-                    {{ __('Articles') }}
-                </x-responsive-nav-link>
-            @endrole
+
             @role(['admin'])
                 <x-responsive-nav-link :href="route('backend.programs.index')" :active="request()->routeIs(['backend.programs.index', 'backend.programs.create', 'backend.programs.edit'])">
                     {{ __('Programs') }}

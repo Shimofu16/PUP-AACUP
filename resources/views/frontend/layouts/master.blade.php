@@ -28,10 +28,16 @@
             --color-maroon-800: #51000c;
             --color-maroon-900: #43000a;
         }
+
+        @layer base {
+            body {
+                font-family: 'Noto Sans', sans-serif;
+            }
+        }
     </style>
 </head>
 
-<body class="font-sans antialiased bg-gray-100">
+<body class="nato-sans antialiased bg-gray-100">
     <div class="min-h-screen">
         <main>
             {{-- nav --}}

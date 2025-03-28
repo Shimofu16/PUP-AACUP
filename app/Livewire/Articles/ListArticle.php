@@ -39,10 +39,11 @@ class ListArticle extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Article::query()
-            ->when(Auth::user()->hasRole('faculty'), fn(Builder $query) => $query->where('user_id', Auth::user()->id))
-            ->when(is_array($this->status), fn(Builder $query) => $query->whereIn('status', $this->status))
-            ->when(is_string($this->status), fn(Builder $query) => $query->where('status', $this->status))
+            ->query(
+                Article::query()
+                    ->when(Auth::user()->hasRole('faculty'), fn(Builder $query) => $query->where('user_id', Auth::user()->id))
+                    ->when(is_array($this->status), fn(Builder $query) => $query->whereIn('status', $this->status))
+                    ->when(is_string($this->status), fn(Builder $query) => $query->where('status', $this->status))
             )
             ->columns([
                 TextColumn::make('name')
@@ -51,6 +52,14 @@ class ListArticle extends Component implements HasForms, HasTable
                 TextColumn::make('program.name')->searchable(),
                 TextColumn::make('user.name')->searchable(),
                 TextColumn::make('area.name')->searchable(),
+                TextColumn::make('status')
+                    ->searchable()
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'gray',
+                        'accepted' => 'success',
+                        'declined' => 'danger',
+                    }),
             ])
             ->filters([
                 // Tables\Filters\SelectFilter::make('status')
@@ -66,7 +75,7 @@ class ListArticle extends Component implements HasForms, HasTable
                     Action::make('view')
                         ->label('View Details')
                         ->icon('heroicon-o-eye')
-                        ->url(fn (Article $record) => route('backend.articles.show', $record)),
+                        ->url(fn(Article $record) => route('backend.articles.show', $record)),
                     EditAction::make()
                         ->url(fn(Article $record) => route('backend.articles.edit', $record))
                         ->icon('heroicon-o-pencil')
@@ -80,7 +89,7 @@ class ListArticle extends Component implements HasForms, HasTable
                             Storage::deleteDirectory('public/articles/' . $record->name);
 
                             activity()
-                            ->event('deleted')
+                                ->event('deleted')
                                 ->causedBy(auth()->user())
                                 ->performedOn($record)
                                 ->log('Deleted article ' . $record->name);
@@ -116,20 +125,7 @@ class ListArticle extends Component implements HasForms, HasTable
                                             RichEditor::make('reason')
                                                 ->label('Reason for Decline')
                                                 ->required()
-                                                ->toolbarButtons([
-                                                    'blockquote',
-                                                    'bold',
-                                                    'bulletList',
-                                                    'h2',
-                                                    'h3',
-                                                    'italic',
-                                                    'link',
-                                                    'orderedList',
-                                                    'redo',
-                                                    'strike',
-                                                    'underline',
-                                                    'undo',
-                                                ])
+                                                ->toolbarButtons([])
                                                 ->columnSpanFull(),
                                         ])
                                         ->columns(1)
@@ -142,10 +138,16 @@ class ListArticle extends Component implements HasForms, HasTable
                                         ->body('Article has been declined successfully.')
                                         ->success()
                                         ->send();
+                                    activity()
+                                        ->event('updated')
+                                        ->causedBy(auth()->user())
+                                        ->performedOn($record)
+                                        ->log('Declined article ' . $record->name); 
+                                        
                                 }),
                         ])
-                       
-                        ->action(function(Article $record)  {
+
+                        ->action(function (Article $record) {
                             activity()
                                 ->event('updated')
                                 ->causedBy(auth()->user())

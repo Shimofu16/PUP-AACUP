@@ -73,7 +73,7 @@
                 </li>
 
                 <li>
-                    <a href="{{ route('about.index') }}"
+                    <a href="{{ route('about.index', ['page' => 'PUP Calauan']) }}"
                         class="block rounded-sm px-3 py-2 text-gray-900 md:p-0 {{ request()->routeIs('about.index') ? 'text-maroon-700' : 'hover:bg-maroon-100 md:border-0 md:hover:bg-transparent md:hover:text-maroon-700' }}">
                         About PUP Calauan
                     </a>

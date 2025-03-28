@@ -17,9 +17,10 @@ Route::get('/', function(){
     return view('frontend.home.index');
 })->name('home.index');
 
-Route::get('/about', function(){
-    return view('frontend.about.index');
+Route::get('/about/{page}', function(string $page){
+    return view('frontend.about.index', compact('page'));
 })->name('about.index');
+
 Route::prefix('programs')->name('programs.')->group(function(){
     Route::get('/', function(){
         return view('frontend.programs.index');
@@ -31,6 +32,7 @@ Route::prefix('programs')->name('programs.')->group(function(){
         return view('frontend.programs.show', compact('program'));
     })->name('show');
 });
+
 Route::prefix('area')->name('area.')->group(function(){
     Route::get('/', function(){
         return view('frontend.articles.index');
@@ -72,8 +74,9 @@ Route::middleware(['auth', 'verified'])->prefix('backend')->name('backend.')->gr
 
     // Articles Routes
     Route::get('articles/reviewed', [ArticleController::class, 'reviewed'])->name('articles.reviewed');
+    Route::get('articles/pending', [ArticleController::class, 'pending'])->name('articles.pending');
     Route::get('articles/create/{area?}', [ArticleController::class, 'create'])->name('articles.create');
-    Route::resource('articles', ArticleController::class)->except(['create']);
+    Route::resource('articles', ArticleController::class)->except(['create', 'index']);
 
     // Areas Routes
     Route::get('areas', [AreaController::class, 'index'])->name('areas.index');

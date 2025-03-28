@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Articles') }}
+            {{ $title }}
         </h2>
-        @if (request()->routeIs(['backend.articles.index']))
+        @if (request()->routeIs(['backend.articles.pending']))
             <a href="{{ route('backend.articles.create') }}">
                 <x-primary-button>
                     {{ __('Create Article') }}
